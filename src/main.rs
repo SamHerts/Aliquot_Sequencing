@@ -1,69 +1,49 @@
-//! # Rust solution 5 by Kulasko
-//!
-//! As it's written in the readme, this solution focuses in different multithreading algorithms.
-//! Each algorithm is run with a set of different prime flag storage types.
+use prime_factorization::Factorization;
 
-#![warn(missing_docs)]
 
-mod data_type;
-mod sieve;
+fn main() {
+    // Factorize following semiprime
+    let mut num: u128 = 62;
+    let mut step = 1;
 
-pub use data_type::{DataType, Integer};
+    loop {
+        let mut factors = Factorization::run(num).factors;
+        let mut extra_factors = factors.clone();
+        extra_factors.dedup();
+        factors.append(&mut extra_factors);
+        factors.sort();
+        factors.push(0);
+        // let sum: u128 = factors.iter().sum();
+        let mut multiplication = 0;
+        let mut prime_sum = 0;
+        let mut prime_index = 0;
+        let mut previous = factors[0];
 
-use sieve::flag_data::{FlagData, STRIPE_SIZE};
-use sieve::{algorithm, flag_data, Algorithm, Sieve, SieveExecute};
+        for val in factors.iter() {
+            if previous == *val {
+                prime_sum += (*val).pow(prime_index);
+            }
+            else {
+                multiplication += prime_sum;
+                prime_index = 0;
+                prime_sum = (*val).pow(prime_index);
+            }
 
-use std::time::{Duration, Instant};
-
-pub fn main() {
-    let sieve_size: usize = 100000;
-    let duration: usize = 5;
-    let set_size: usize = 32;
-
-    println!("Starting prime sieve");
-    println!("Working set size is {} kB", set_size);
-
-    perform_bench::<Sieve<algorithm::Tile, FlagData<flag_data::Stripe, [u8; STRIPE_SIZE]>, [u8; STRIPE_SIZE]>, algorithm::Tile>(algorithm::Tile(set_size * 1024), sieve_size, duration);
-}
-
-/// Executes a specific bench and prints the result.
-fn perform_bench<S: SieveExecute<A>, A: Algorithm>(
-    algorithm: A,
-    sieve_size: usize,
-    duration: usize,
-) {
-    let mut elapsed = Duration::from_secs(0);
-    let id_string = format!("{}-{}-u{}", A::ID_STR, S::ID_STR, S::BITS);
-
-    println!();
-    println!(
-        "Running {} with {} primes for {} seconds",
-        id_string, sieve_size, duration
-    );
-
-    let start = Instant::now();
-
-    let mut sieve = S::new(sieve_size, algorithm);
-    sieve.sieve();
-    elapsed = Instant::now() - start;
-
-    // let sieve = last_sieve.expect("Used a duration of zero!");
-    let result = sieve.count_primes();
-
-    println!(
-        "Time: {}, Threads: {}, Prime count: {}",
-        elapsed.as_secs_f64(),
-        sieve.thread_count(),
-        result
-    );
-    if let Ok(index) = PRIMES_IN_SIEVE.binary_search_by_key(&sieve_size, |(key, _)| *key) {
-        if PRIMES_IN_SIEVE[index].1 == result {
-            eprintln!("This result is verified to be correct");
-        } else {
-            eprintln!("ERROR: Incorrect sieve result!");
+            prime_index +=1;
+            previous = *val;
         }
+
+        println!("Number: {}, Factors: {:?}, Sum: {}, Step: {}", num, factors, multiplication, step);
+        if multiplication < 0 {
+            break;
+        }
+        step += 1;
+
+        num = multiplication;
     }
 }
+
+
 
 /// Known prime counts for specific sieve sizes.
 const PRIMES_IN_SIEVE: [(usize, usize); 11] = [

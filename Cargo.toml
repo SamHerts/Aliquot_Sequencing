@@ -1,25 +1,16 @@
 [package]
 name = "rust-solution-5"
 version = "0.1.0"
-authors = ["Kai Rese"]
-edition = "2018"
+authors = ["Sam Herts"]
+edition = "2021"
 
 [dependencies]
-rayon = "^1"
-structopt = "^0.3"
+prime_factorization = "1.0.4"
+
 
 [profile.release]
 codegen-units = 1
 lto = true
 opt-level = 3
 
-#[build]
-#
-#[target.x86_64-pc-windows-msvc]
-#rustflags = [ "-C", "target-cpu=native" ]
-#
-#[target.x86_64-unknown-linux-gnu]
-#rustflags = [ "-C", "target-cpu=native" ]
-#
-#[target.aarch64-unknown-linux-gnu]
-#rustflags = [ "-C", "target-cpu=native" ]
+

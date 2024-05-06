@@ -1,7 +1,6 @@
-# Prime Sieve by @Kulasko
 # Aliquot Conversion by @SamHerts
 
-Sources:
+Future Sources:
 - Kai Rese @Kulasko https://git.h3n.eu/Kulasko
   - https://github.com/PlummersSoftwareLLC/Primes/tree/drag-race/PrimeRust/solution_5
 
