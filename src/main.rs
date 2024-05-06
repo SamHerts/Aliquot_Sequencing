@@ -16,11 +16,11 @@ use sieve::{algorithm, flag_data, Algorithm, Sieve, SieveExecute};
 use std::time::{Duration, Instant};
 
 pub fn main() {
-    let sieve_size: usize = 1000;
+    let sieve_size: usize = 100000;
     let duration: usize = 5;
-    let set_size: usize = 16;
+    let set_size: usize = 32;
 
-    println!("Starting benchmark");
+    println!("Starting prime sieve");
     println!("Working set size is {} kB", set_size);
 
     perform_bench::<Sieve<algorithm::Tile, FlagData<flag_data::Stripe, [u8; STRIPE_SIZE]>, [u8; STRIPE_SIZE]>, algorithm::Tile>(algorithm::Tile(set_size * 1024), sieve_size, duration);
@@ -51,7 +51,7 @@ fn perform_bench<S: SieveExecute<A>, A: Algorithm>(
     let result = sieve.count_primes();
 
     println!(
-        "Time: {},  , Threads: {}, Prime count: {}",
+        "Time: {}, Threads: {}, Prime count: {}",
         elapsed.as_secs_f64(),
         sieve.thread_count(),
         result
