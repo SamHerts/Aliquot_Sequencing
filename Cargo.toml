@@ -4,8 +4,6 @@ version = "0.1.0"
 authors = ["Kai Rese"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 rayon = "^1"
 structopt = "^0.3"
@@ -14,3 +12,14 @@ structopt = "^0.3"
 codegen-units = 1
 lto = true
 opt-level = 3
+
+#[build]
+#
+#[target.x86_64-pc-windows-msvc]
+#rustflags = [ "-C", "target-cpu=native" ]
+#
+#[target.x86_64-unknown-linux-gnu]
+#rustflags = [ "-C", "target-cpu=native" ]
+#
+#[target.aarch64-unknown-linux-gnu]
+#rustflags = [ "-C", "target-cpu=native" ]
