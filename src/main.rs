@@ -1,45 +1,43 @@
+extern crate num;
+
+
+use std::collections::HashMap;
 use prime_factorization::Factorization;
+use num::{BigUint, One, Zero};
 
 
 fn main() {
-    // Factorize following semiprime
-    let mut num: u128 = 62;
-    let mut step = 1;
+    let mut num: u128 = 276;
+    let mut step = 0;
 
     loop {
-        let mut factors = Factorization::run(num).factors;
-        let mut extra_factors = factors.clone();
-        extra_factors.dedup();
-        factors.append(&mut extra_factors);
-        factors.sort();
-        factors.push(0);
-        // let sum: u128 = factors.iter().sum();
-        let mut multiplication = 0;
-        let mut prime_sum = 0;
-        let mut prime_index = 0;
-        let mut previous = factors[0];
-
-        for val in factors.iter() {
-            if previous == *val {
-                prime_sum += (*val).pow(prime_index);
-            }
-            else {
-                multiplication += prime_sum;
-                prime_index = 0;
-                prime_sum = (*val).pow(prime_index);
-            }
-
-            prime_index +=1;
-            previous = *val;
+        let factors = Factorization::run(num).factors;
+        // Create a HashMap to count occurrences of each integer
+        let mut counts: HashMap<BigUint, usize> = HashMap::new();
+        for &num  in &factors {
+            *counts.entry(BigUint::from(num.clone())).or_insert(0) += 1;
         }
 
-        println!("Number: {}, Factors: {:?}, Sum: {}, Step: {}", num, factors, multiplication, step);
-        if multiplication < 0 {
+        // Create a new vector with counts
+        let deduplicated_vector: Vec<(BigUint, usize)> = counts.into_iter().collect();
+
+        let mut result: BigUint = One::one();
+
+        for (val, power) in &deduplicated_vector {
+            let temp: BigUint = (val.pow((*power + 1) as u32) - BigUint::one()) / (val - BigUint::one());
+            result *= temp;
+        }
+        result -= num.clone();
+        println!("{result}");
+
+
+        println!("Step: {}, Factors: {:?}, Sum: {}, Number: {}", step, deduplicated_vector, result, num);
+        if result == Zero::zero() {
             break;
         }
         step += 1;
 
-        num = multiplication;
+        num = u128::try_from(result).unwrap();
     }
 }
 
